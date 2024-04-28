@@ -1,15 +1,18 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {HttpClientModule} from '@angular/common/http';
-import { EmployeeRoutingModule } from './component/employee/employee-routing.module';
-
+import { EmployeeComponent} from './component/employee/employee.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
-  declarations: [],
+  declarations: [
+ 
+  ],
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     HttpClientModule,
-    EmployeeRoutingModule
+    EmployeeComponent
   ]
 })
 export class AppModule { }

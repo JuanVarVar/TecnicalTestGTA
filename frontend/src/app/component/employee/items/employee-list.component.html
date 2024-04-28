@@ -1,0 +1,106 @@
+<section>
+  <div
+    class="fixed right-0 top-42 transform -translate-y-1/2 bg-white rounded-l-md w-120 h-120"
+  >
+    <div class="flex items-center">
+      <div class="w-1/3 pr-1">
+        <input
+          type="number"
+          name="search"
+          (change)="onChangeOffset($event)"
+          placeholder="Indice"
+          class="w-30 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
+        />
+      </div>
+      <div class="w-1/3 pr-1">
+        <input
+          type="text"
+          name="search"
+          (change)="onChangeSearch($event)"
+          placeholder="Buscar"
+          class="border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
+        />
+      </div>
+      <div class="w-1/3 pl-1">
+        <button
+          (click)="search()"
+          class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md w-full"
+        >
+          Buscar
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="h-auto flex justify-center items-center pb-12 pt-12">
+    <div class="w-full h-full p-8 bg-white rounded-lg shadow-md">
+      <table class="w-full border-collapse">
+        <thead>
+          <tr>
+            <th colspan="11" class="border border-gray-200 py-2 text-center">
+              Lista de Empleados
+            </th>
+          </tr>
+
+          <tr>
+            <th class="border border-gray-200 py-2 text-center">Nombre</th>
+            <th class="border border-gray-200 py-2 text-center">Apellido</th>
+            <th class="border border-gray-200 py-2 text-center">2° Apellido</th>
+            <th class="border border-gray-200 py-2 text-center">Otros Nombres</th>
+            <th class="border border-gray-200 py-2 text-center">Tipo de Documento</th>
+            <th class="border border-gray-200 py-2 text-center">Identificación</th>
+            <th class="border border-gray-200 py-2 text-center">Email</th>
+            <th class="border border-gray-200 py-2 text-center">Estado</th>
+            <th class="border border-gray-200 py-2 text-center">Ingreso</th>
+            <th class="border border-gray-200 py-2 text-center">Creación</th>
+            <th class="border border-gray-200 py-2 text-center">Actualización</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if(employeesList$ | async; as resultObjetc){ @for(item of
+          resultObjetc.data; track item){
+          <tr>
+            <td class="border border-gray-200 py-2 text-center">
+              {{ item.firstName }}
+            </td>
+            <td class="border border-gray-200 py-2 text-center">
+              {{ item.firstLastName }}
+            </td>
+            <td class="border border-gray-200 py-2 text-center">
+              {{ item.secondLastName }}
+            </td>
+            <td class="border border-gray-200 py-2 text-center">
+              {{ item.otherName }}</td>
+            <td class="border border-gray-200 py-2 text-center">
+              {{ item.document }}</td>
+            <td class="border border-gray-200 py-2 text-center">
+              {{ item.identification }}
+            </td>
+            <td class="border border-gray-200 py-2 text-center">
+              {{ item.email }}</td>
+            <td class="border border-gray-200 py-2 text-center">
+              {{ item.status ? "Activo" : "Inactivo" }}
+            </td>
+            <td class="border border-gray-200 py-2 text-center">
+              {{ item.startDate }}</td>
+            <td class="border border-gray-200 py-2 text-center">
+              {{ item.updated_at }}</td>
+            <td class="border border-gray-200 py-2 text-center">
+              {{ item.created_at }}</td>
+          </tr>
+
+          } } @else{
+          <tr>
+            <th colspan="11" class="border border-gray-200 py-2 text-center">
+              <img
+                src="https://www.wpfaster.org/wp-content/uploads/2013/06/circle-loading-gif.gif"
+                alt="Descripción del GIF"
+                class="mx-auto"
+              />
+            </th>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

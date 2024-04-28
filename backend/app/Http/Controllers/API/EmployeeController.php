@@ -63,13 +63,15 @@ class EmployeeController extends Controller
         
         try {
           $requestValidate = [
-          'criteria' => 'required|max:50|regex:/^[a-zA-Z0-9\/áéíóúÁÉÍÓÚ\s]+$/'
+          'criteria' => 'required|max:50|regex:/^[a-zA-Z0-9\/áéíóúÁÉÍÓÚ\s]+$/',
+          'offset' => 'required|numeric'
           ];
 
           $messages2 = [
             'required' => 'El campo es obligatorio',
             'max' => 'Supero el numero de caracteres permitidos',
             'regex' => 'Estas colocando caracteres no permitidos',
+            'numeric' => 'Debe ser un numero',
           ];
 
           $validator = Validator::make($request ->all(),$requestValidate, $messages2);

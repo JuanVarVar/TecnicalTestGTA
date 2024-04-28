@@ -12,6 +12,5 @@
     "\\backend\\database\\seeders",
     "\\backend\\routes"
   ],
-  "SelectedNode": "\\backend\\app\\Http\\Controllers\\API\\EmployeeController.php",
   "PreviewInSolutionExplorer": false
 }

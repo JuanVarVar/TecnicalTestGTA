@@ -15,4 +15,8 @@ export class EmployeeService {
   public getEmployees(): Observable<any>{
       return this.http.get(this.API);
   }
+
+  public getEmployeesCriteria(e: string): Observable<any>{
+    return this.http.post(this.API+"criteria",{"criteria":e},{ headers: { 'Content-Type': 'application/json' }});
+  }
 }

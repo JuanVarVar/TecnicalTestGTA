@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { EmployeeService } from './component/employee/services/employee.service';
+
 
 @Component({
   selector: 'app-root',
@@ -10,22 +10,8 @@ import { EmployeeService } from './component/employee/services/employee.service'
   styleUrl: './app.component.css'
 })
 
-
-export class AppComponent implements OnInit{
+export class AppComponent {
   title = 'frontend';
-
-  employees: any = {};
-
-  constructor(private service:EmployeeService){
-    
-  }
-
-  ngOnInit(): void {
-
-    this.service.getEmployees().subscribe(employees => {
-      this.employees = employees;
-    })
-    
-  }
 }
+
 
