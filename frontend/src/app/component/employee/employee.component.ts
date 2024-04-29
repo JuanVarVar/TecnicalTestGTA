@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AsyncPipe} from '@angular/common';
+import { AsyncPipe,NgIf} from '@angular/common';
 import { EmployeeService } from './services/employee.service';
 
 import { EmployeeListComponent } from './items/employee-list.component';

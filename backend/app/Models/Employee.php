@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Illuminate\Support\Carbon;
 
 class Employee extends Model
 {
@@ -46,6 +47,7 @@ class Employee extends Model
         $data['firstName'] = $attributes['firstName'];
         $data['firstLastName'] = $attributes['firstLastName'];
         $data['secondLastName'] = $attributes['secondLastName'];
+        $data['otherName'] = $attributes['otherName'];
         $data['area'] = $attributes['area'];
         $data['country'] = $attributes['country'];
         $data['document'] = $attributes['document'];
@@ -92,10 +94,10 @@ class Employee extends Model
         $data['firstName'] = $attributes['firstName'];
         $data['firstLastName'] = $attributes['firstLastName'];
         $data['secondLastName'] = $attributes['secondLastName'];
+        $data['otherName'] = $attributes['otherName'];
         $data['area'] = $attributes['area'];
         $data['country'] = $attributes['country'];
         $data['document'] = $attributes['document'];
-        $data['startDate'] = $attributes['startDate'];
 
         $firstLastName = $data['firstLastName'];
         $firstName = $data['firstName'];
@@ -155,6 +157,21 @@ class Employee extends Model
                     ->orWhere('startDate', '==',  (preg_match($patron, $criteria) ? $criteria : "0000-00-00"))
                     ->orWhere('status', '==',  ($criteria == "Activo" ? 1 : ($criteria == "Inactivo" ? 0 : "") ));
                     
+    }
+
+    public function getStartDateAttribute($value)
+    {
+        return Carbon::parse($value)->format('d/m/Y H:i:s');
+    }
+
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('d/m/Y H:i:s');
+    }
+    
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('d/m/Y H:i:s');
     }
 
 }

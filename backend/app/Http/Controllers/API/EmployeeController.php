@@ -41,7 +41,7 @@ class EmployeeController extends Controller
 
           //Consulta de datos
 
-          $data = Employee::query()->orderBy('id');
+          $data = Employee::query()->orderBy('id','desc');
 
           foreach ($ordersField as $field){
             if(existField($field))
@@ -52,7 +52,7 @@ class EmployeeController extends Controller
 
           return $this->responseData($output->all(),'Busqueda completa','ninguno',true,200);
         }catch(\Exception $e){
-
+        
           return $this->responseData([],'Ha ocurrido un error en el API',$e->getCode(),false,500);
             
         }
@@ -77,7 +77,7 @@ class EmployeeController extends Controller
           $validator = Validator::make($request ->all(),$requestValidate, $messages2);
 
           if($validator->fails()){
-            return $this->responseData($validator->errors()->toArray(),'Validación Fallida','ninguno',false,403);
+            return $this->responseData($validator->errors()->toArray(),'Validación Fallida','403',false,403);
           }
 
           $ordersField = [];
@@ -141,14 +141,13 @@ class EmployeeController extends Controller
       public function create(Request $request){
         
         $modelo = new Employee();
-          
         try{
 
           $requestValidate = [
-            'firstName' => 'required|max:20|regex:/^[a-zA-Z]+$/',
-            'firstLastName' => 'required|max:20|regex:/^[a-zA-Z]+$/',
-            'secondLastName' => 'required|max:20|regex:/^[a-zA-Z]+$/',
-            'otherName' => 'max:50|regex:/^[a-zA-Z]+$/',
+            'firstName' => 'required|max:20|regex:/^[a-zA-Z\s]+$/',
+            'firstLastName' => 'required|max:20|regex:/^[a-zA-Z\s]+$/',
+            'secondLastName' => 'required|max:20|regex:/^[a-zA-Z\s]+$/',
+            'otherName' => 'nullable|max:50|regex:/^[a-zA-Z\s]+$/',
             'country' => ['required', Rule::in($modelo->getCountries())],
             'document' => ['required', Rule::in($modelo->getDocuments())],
             'startDate' => [
@@ -163,7 +162,7 @@ class EmployeeController extends Controller
           $validator = Validator::make($request ->all(),$requestValidate, $this->messages);
 
           if($validator->fails()){
-            return $this->responseData($validator->errors()->toArray(),'Validación Fallida','ninguno',false,403);
+            return $this->responseData($validator->errors()->toArray(),'Validación Fallida','403',false,403);
           }
           
           $usuario = Employee::create($request->all());
@@ -171,7 +170,6 @@ class EmployeeController extends Controller
           return $this->responseData($usuario->toArray(),'Creación completa','ninguno',true,200);
         
         }catch(\Exception $e){
-
           return $this->responseData($request->all(),'Ha ocurrido un error en el API',$e->getCode(),false,500);
           
         }
@@ -189,13 +187,12 @@ class EmployeeController extends Controller
           $validator = Validator::make($request ->all(),$requestValidate, $this->messages);
 
           if($validator->fails()){
-            return $this->responseData($validator->errors()->toArray(),'Validación Fallida','ninguno',false,403);
+            return $this->responseData($validator->errors()->toArray(),'Validación Fallida','403',false,403);
           }
 
           $res = Employee::findOrFail($id);
-          $response = $res->toArray();
           $res->delete();
-          return $this->responseData($response->toArray(),'Eliminación completa','ninguno',true,200);
+          return $this->responseData([],'Eliminación completa','ninguno',true,200);
         
         }catch(\Exception $e){
 
@@ -218,7 +215,7 @@ class EmployeeController extends Controller
           $validator = Validator::make($request ->all(),$requestValidate, $this->messages);
 
           if($validator->fails()){
-            return $this->responseData($validator->errors()->toArray(),'Validación Fallida','ninguno',false,403);
+            return $this->responseData($validator->errors()->toArray(),'Validación Fallida','403',false,403);
           }
 
           $res = Employee::findOrFail($id);
@@ -239,18 +236,12 @@ class EmployeeController extends Controller
         try{
           $requestValidate = [
             'id' => 'required|exists:employee,id',
-            'firstName' => 'required|max:20|regex:/^[a-zA-Z]+$/',
-            'firstLastName' => 'required|max:20|regex:/^[a-zA-Z]+$/',
-            'secondLastName' => 'required|max:20|regex:/^[a-zA-Z]+$/',
-            'otherName' => 'max:50|regex:/^[a-zA-Z]+$/',
+            'firstName' => 'required|max:20|regex:/^[a-zA-Z\s]+$/',
+            'firstLastName' => 'required|max:20|regex:/^[a-zA-Z\s]+$/',
+            'secondLastName' => 'required|max:20|regex:/^[a-zA-Z\s]+$/',
+            'otherName' => 'nullable|max:50|regex:/^[a-zA-Z\s]+$/',
             'country' => ['required', Rule::in($modelo->getCountries())],
             'document' => ['required', Rule::in($modelo->getDocuments())],
-            'startDate' => [
-                'required',
-                'date',
-                'before_or_equal:' .now()->format('Y-m-d'),
-                'after:' .now()->subMonth()->format('Y-m-d'),
-            ],
             'area' => ['required', Rule::in($modelo->getAreas())]
           ];
 
@@ -259,7 +250,7 @@ class EmployeeController extends Controller
           $validator = Validator::make($request ->all(),$requestValidate, $this->messages);
 
           if($validator->fails()){
-            return $this->responseData($validator->errors()->toArray(),'Validación Fallida','ninguno',false,403);
+            return $this->responseData($validator->errors()->toArray(),'Validación Fallida','403',false,403);
           }
 
           $usuario = $modelo->updateValues($request->all());

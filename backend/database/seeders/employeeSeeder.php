@@ -23,7 +23,7 @@ class employeeSeeder extends Seeder
         $areas = $modelo->getAreas();
        
 
-        for ($i = 0; $i < 40; $i++) {
+        for ($i = 0; $i < 75; $i++) {
             $data = [];
             $data['startDate']= date('Y-m-d');
             $data['firstLastName'] = $apellidos[array_rand($apellidos)];

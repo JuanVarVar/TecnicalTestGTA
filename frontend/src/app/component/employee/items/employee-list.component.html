@@ -1,18 +1,43 @@
 <section>
   <div
-    class="fixed right-0 top-42 transform -translate-y-1/2 bg-white rounded-l-md w-120 h-120"
+    class="{{
+      deleteEmployee ? 'fixed' : 'hidden'
+    }} top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex items-center justify-center z-50"
+  >
+    <div class="bg-white p-4 rounded-md">
+      <p>¿Estás seguro de que deseas eliminar este empleado?</p>
+      <div class="flex justify-center mt-4">
+        <button
+          (click)="deleteEmployeeData(true)"
+          class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-md mr-2"
+        >
+          Sí
+        </button>
+        <button
+          (click)="deleteEmployeeData(false)"
+          class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-md"
+        >
+          No
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    class="fixed right-0 top-0 transform -translate-y-0 bg-white rounded-l-md w-120 h-120 max-h-screen overflow-auto shadow-md"
   >
     <div class="flex items-center">
-      <div class="w-1/3 pr-1">
+      <div class="w-1/4 pr-1">
         <input
           type="number"
           name="search"
           (change)="onChangeOffset($event)"
+          [value]="offset"
+          min="1"
           placeholder="Indice"
-          class="w-30 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
+          class="w-full border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         />
       </div>
-      <div class="w-1/3 pr-1">
+      <div class="w-1/2 pr-1">
         <input
           type="text"
           name="search"
@@ -21,7 +46,7 @@
           class="border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
         />
       </div>
-      <div class="w-1/3 pl-1">
+      <div class="w-1/4 pl-1">
         <button
           (click)="search()"
           class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md w-full"
@@ -30,35 +55,302 @@
         </button>
       </div>
     </div>
+    <div class="w-full">
+      @if(idSelector != "" && updateEmployee){
+      <button
+        (click)="restForm()"
+        class="bg-amber-200 shadow-lg text-black font-bold py-2 px-4 rounded-md w-full"
+      >
+        Cancelar Edición
+      </button>
+      }@else{
+      <button
+        (click)="addEmployeForm()"
+        class="bg-white shadow-lg text-black font-bold py-2 px-4 rounded-md w-full"
+      >
+        Añadir Empleado
+      </button>
+      }
+    </div>
+    <div
+      *ngIf="addEmployee || updateEmployee"
+      class="mt-4 p-4 bg-white shadow-md w-full"
+    >
+      <form [formGroup]="formulario" (ngSubmit)="onSubmit()">
+        <p *ngIf="errorSystem" class="text-red-500 w-full text-center">
+          {{ errorSystem }}
+        </p>
+        <p
+          *ngIf="errors && errors.id && errors.id.length > 0"
+          class="text-red-500 w-full text-center"
+        >
+          {{ errors.firstName.join("\n") }}
+        </p>
+
+        <label for="firstName">Nombre</label>
+        <input
+          type="text"
+          id="firstName"
+          formControlName="firstName"
+          class="border rounded-md py-2 px-4 w-full {{
+            errors && errors.firstName && errors.firstName.length > 0
+              ? 'border-red-500'
+              : 'border-gray-300'
+          }}"
+        />
+        <p
+          *ngIf="errors && errors.firstName && errors.firstName.length > 0"
+          class="text-red-500"
+        >
+          {{ errors.firstName.join("\n") }}
+        </p>
+
+        <hr class="border-gray-300 my-4" />
+
+        <label for="firstLastName">Primer Apellido</label>
+        <input
+          type="text"
+          id="firstLastName"
+          formControlName="firstLastName"
+          class="border rounded-md py-2 px-4 w-full {{
+            errors && errors.firstLastName && errors.firstLastName.length > 0
+              ? 'border-red-500'
+              : 'border-gray-300'
+          }}"
+        />
+        <p
+          *ngIf="
+            errors && errors.firstLastName && errors.firstLastName.length > 0
+          "
+          class="text-red-500"
+        >
+          {{ errors.firstLastName.join("\n") }}
+        </p>
+
+        <hr class="border-gray-300 my-4" />
+
+        <label for="secondLastName">Segundo Apellido</label>
+        <input
+          type="text"
+          id="secondLastName"
+          formControlName="secondLastName"
+          class="border rounded-md py-2 px-4 w-full {{
+            errors && errors.secondLastName && errors.secondLastName.length > 0
+              ? 'border-red-500'
+              : 'border-gray-300'
+          }}"
+        />
+        <p
+          *ngIf="
+            errors && errors.secondLastName && errors.secondLastName.length > 0
+          "
+          class="text-red-500"
+        >
+          {{ errors.secondLastName.join("\n") }}
+        </p>
+
+        <hr class="border-gray-300 my-4" />
+
+        <label for="otherName">Otro Nombre</label>
+        <input
+          type="text"
+          id="otherName"
+          formControlName="otherName"
+          class="border rounded-md py-2 px-4 w-full {{
+            errors && errors.otherName && errors.otherName.length > 0
+              ? 'border-red-500'
+              : 'border-gray-300'
+          }}"
+        />
+        <p
+          *ngIf="errors && errors.otherName && errors.otherName.length > 0"
+          class="text-red-500"
+        >
+          {{ errors.otherName.join("\n") }}
+        </p>
+
+        <hr class="border-gray-300 my-4" />
+
+        <label for="country">País</label>
+        <select
+          id="country"
+          formControlName="country"
+          class="border rounded-md py-2 px-4 w-full {{
+            errors && errors.country && errors.country.length > 0
+              ? 'border-red-500'
+              : 'border-gray-300'
+          }}"
+        >
+          <option value="Colombia">Colombia</option>
+          <option value="Estados Unidos">Estados Unidos</option>
+        </select>
+        <p
+          *ngIf="errors && errors.country && errors.country.length > 0"
+          class="text-red-500"
+        >
+          {{ errors.country.join("\n") }}
+        </p>
+
+        <hr class="border-gray-300 my-4" />
+
+        <label for="document">Tipo de Documento</label>
+        <select
+          id="document"
+          formControlName="document"
+          class="border rounded-md py-2 px-4 w-full {{
+            errors && errors.document && errors.document.length > 0
+              ? 'border-red-500'
+              : 'border-gray-300'
+          }}"
+        >
+          <option value="Cédula de Ciudadanía">Cédula de Ciudadanía</option>
+          <option value="Cédula de Extranjería">Cédula de Extranjería</option>
+          <option value="Pasaporte">Pasaporte</option>
+          <option value="Permiso Especial">Permiso Especial</option>
+        </select>
+        <p
+          *ngIf="errors && errors.document && errors.document.length > 0"
+          class="text-red-500"
+        >
+          {{ errors.document.join("\n") }}
+        </p>
+
+        <div class="p-0 m-0 w-full {{ updateEmployee ? 'hidden' : 'block' }}">
+          <hr class="border-gray-300 my-4" />
+
+          <label for="startDate">Fecha de Inicio</label>
+          <input
+            type="date"
+            id="startDate"
+            formControlName="startDate"
+            class="border rounded-md py-2 px-4 w-full {{
+              errors && errors.startDate && errors.startDate.length > 0
+                ? 'border-red-500'
+                : 'border-gray-300'
+            }}"
+          />
+        </div>
+        <p
+          *ngIf="errors && errors.startDate && errors.startDate.length > 0"
+          class="text-red-500"
+        >
+          {{ errors.startDate.join("\n") }}
+        </p>
+
+        <hr class="border-gray-300 my-4" />
+
+        <label for="area">Área</label>
+        <select
+          id="area"
+          formControlName="area"
+          class="border rounded-md py-2 px-4 w-full {{
+            errors && errors.area && errors.area.length > 0
+              ? 'border-red-500'
+              : 'border-gray-300'
+          }}"
+        >
+          <option value="Administración">Administración</option>
+          <option value="Financiera">Financiera</option>
+          <option value="Compras">Compras</option>
+          <option value="Infraestructura">Infraestructura</option>
+          <option value="Operación">Operación</option>
+          <option value="Talento Humano">Talento Humano</option>
+          <option value="Servicios Varios">Servicios Varios</option>
+        </select>
+        <p
+          *ngIf="errors && errors.area && errors.area.length > 0"
+          class="text-red-500"
+        >
+          {{ errors.area.join("\n") }}
+        </p>
+
+        <br />
+        <br />
+        <br />
+        <button
+          type="submit"
+          class="{{
+            updateEmployee
+              ? 'bg-amber-200 text-black '
+              : 'bg-teal-600 text-white'
+          }}shadow-lg font-bold py-2 px-4 rounded-md w-full"
+        >
+          {{ updateEmployee ? "Actualizar" : "Registrar" }}
+        </button>
+      </form>
+    </div>
   </div>
   <div class="h-auto flex justify-center items-center pb-12 pt-12">
     <div class="w-full h-full p-8 bg-white rounded-lg shadow-md">
+      <p
+        *ngIf="success"
+        class="text-green-500 w-full size-24 font-bold text-center"
+      >
+        {{ success }}
+      </p>
       <table class="w-full border-collapse">
         <thead>
           <tr>
-            <th colspan="11" class="border border-gray-200 py-2 text-center">
+            <th colspan="12" class="border border-gray-200 py-2 text-center">
               Lista de Empleados
             </th>
           </tr>
 
           <tr>
+            <th class="border border-gray-200 py-2 text-center">*</th>
             <th class="border border-gray-200 py-2 text-center">Nombre</th>
             <th class="border border-gray-200 py-2 text-center">Apellido</th>
             <th class="border border-gray-200 py-2 text-center">2° Apellido</th>
-            <th class="border border-gray-200 py-2 text-center">Otros Nombres</th>
-            <th class="border border-gray-200 py-2 text-center">Tipo de Documento</th>
-            <th class="border border-gray-200 py-2 text-center">Identificación</th>
+            <th class="border border-gray-200 py-2 text-center">
+              Otros Nombres
+            </th>
+            <th class="border border-gray-200 py-2 text-center">
+              Tipo de Documento
+            </th>
+            <th class="border border-gray-200 py-2 text-center">
+              Identificación
+            </th>
             <th class="border border-gray-200 py-2 text-center">Email</th>
             <th class="border border-gray-200 py-2 text-center">Estado</th>
             <th class="border border-gray-200 py-2 text-center">Ingreso</th>
             <th class="border border-gray-200 py-2 text-center">Creación</th>
-            <th class="border border-gray-200 py-2 text-center">Actualización</th>
+            <th class="border border-gray-200 py-2 text-center">
+              Actualización
+            </th>
           </tr>
         </thead>
         <tbody>
-          @if(employeesList$ | async; as resultObjetc){ @for(item of
-          resultObjetc.data; track item){
+          @if(!load){ @for(item of renderList.slice( minPage, maxPage ) ; track
+          item){
           <tr>
+            <td class="border border-gray-200 py-2 text-center">
+              <div class="flex">
+                <button
+                  class="mx-3"
+                  title="Eliminar Empleado"
+                  (click)="onDelete(item.id.toString())"
+                >
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/512/6861/6861362.png"
+                    alt="Eliminar Empleado"
+                    width="24"
+                    height="24"
+                  />
+                </button>
+                <button
+                  class="mx-3"
+                  title="Editar Empleado"
+                  (click)="getEmployeeData(item.id.toString())"
+                >
+                  <img
+                    src="https://cdn.icon-icons.com/icons2/2248/PNG/512/pencil_icon_135316.png"
+                    alt="Editar Empleado"
+                    width="24"
+                    height="24"
+                  />
+                </button>
+              </div>
+            </td>
             <td class="border border-gray-200 py-2 text-center">
               {{ item.firstName }}
             </td>
@@ -69,23 +361,29 @@
               {{ item.secondLastName }}
             </td>
             <td class="border border-gray-200 py-2 text-center">
-              {{ item.otherName }}</td>
+              {{ item.otherName }}
+            </td>
             <td class="border border-gray-200 py-2 text-center">
-              {{ item.document }}</td>
+              {{ item.document }}
+            </td>
             <td class="border border-gray-200 py-2 text-center">
               {{ item.identification }}
             </td>
             <td class="border border-gray-200 py-2 text-center">
-              {{ item.email }}</td>
+              {{ item.email }}
+            </td>
             <td class="border border-gray-200 py-2 text-center">
               {{ item.status ? "Activo" : "Inactivo" }}
             </td>
             <td class="border border-gray-200 py-2 text-center">
-              {{ item.startDate }}</td>
+              {{ item.startDate }}
+            </td>
             <td class="border border-gray-200 py-2 text-center">
-              {{ item.updated_at }}</td>
+              {{ item.updated_at }}
+            </td>
             <td class="border border-gray-200 py-2 text-center">
-              {{ item.created_at }}</td>
+              {{ item.created_at }}
+            </td>
           </tr>
 
           } } @else{

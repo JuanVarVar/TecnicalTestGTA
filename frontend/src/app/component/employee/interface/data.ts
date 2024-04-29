@@ -20,4 +20,23 @@ export interface User {
     status: Boolean;
     created_at: Date;
     updated_at: Date;
-  }
+}
+
+export interface ValidationError{
+    data: formError;
+    message: string;
+    internalCode: string;
+    success: boolean;
+}
+
+export interface formError {
+    id: string[];
+    firstName: string[];
+    firstLastName: string[];
+    secondLastName: string[];
+    otherName: string[];
+    country: string[];
+    document: string[];
+    startDate: string[];
+    area: string[];
+}
