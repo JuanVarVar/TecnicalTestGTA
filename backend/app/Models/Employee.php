@@ -49,6 +49,7 @@ class Employee extends Model
         $data['secondLastName'] = $attributes['secondLastName'];
         $data['otherName'] = $attributes['otherName'];
         $data['area'] = $attributes['area'];
+        $data['identification'] = $attributes['identification'];
         $data['country'] = $attributes['country'];
         $data['document'] = $attributes['document'];
         $data['startDate'] = $attributes['startDate'];
@@ -95,6 +96,7 @@ class Employee extends Model
         $data['firstLastName'] = $attributes['firstLastName'];
         $data['secondLastName'] = $attributes['secondLastName'];
         $data['otherName'] = $attributes['otherName'];
+        $data['identification'] = $attributes['identification'];
         $data['area'] = $attributes['area'];
         $data['country'] = $attributes['country'];
         $data['document'] = $attributes['document'];
@@ -121,17 +123,8 @@ class Employee extends Model
         return $employee;
     }
 
-    
-    protected static function boot()
-    {
-        parent::boot();
 
-        static::creating(function ($model) {
-            $model->identification = $model->generateUniqueCode();
-        });
-    }
-
-    protected static function generateUniqueCode()
+    public static function generateUniqueCode()
     {
         $code = Str::random(20);
         while (self::where('identification', $code)->exists()) {

@@ -30,8 +30,7 @@
         <input
           type="number"
           name="search"
-          (change)="onChangeOffset($event)"
-          [value]="offset"
+          [(ngModel)]="offset"
           min="1"
           placeholder="Indice"
           class="w-full border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -170,6 +169,25 @@
         </p>
 
         <hr class="border-gray-300 my-4" />
+        <label for="identification">Numero de Identificación</label>
+        <input
+          type="text"
+          id="identification"
+          formControlName="identification"
+          class="border rounded-md py-2 px-4 w-full {{
+            errors && errors.identification && errors.identification.length > 0
+              ? 'border-red-500'
+              : 'border-gray-300'
+          }}"
+        />
+        <p
+          *ngIf="errors && errors.identification && errors.identification.length > 0"
+          class="text-red-500"
+        >
+          {{ errors.identification.join("\n") }}
+        </p>
+
+        <hr class="border-gray-300 my-4" />
 
         <label for="country">País</label>
         <select
@@ -281,32 +299,37 @@
     </div>
   </div>
   <div class="h-auto flex justify-center items-center pb-12 pt-12">
-    <div class="w-full h-full p-8 bg-white rounded-lg shadow-md">
+    <div class="w-full h-full p-4 bg-white rounded-lg shadow-md">
       <p
         *ngIf="success"
         class="text-green-500 w-full size-24 font-bold text-center"
       >
         {{ success }}
       </p>
+      <p *ngIf="errorSystem" class="text-red-500 w-full text-center">
+        {{ errorSystem }}
+      </p>
       <table class="w-full border-collapse">
         <thead>
           <tr>
-            <th colspan="12" class="border border-gray-200 py-2 text-center">
+            <th colspan="14" class="border border-gray-200 py-2 text-center">
               Lista de Empleados
             </th>
           </tr>
 
           <tr>
-            <th class="border border-gray-200 py-2 text-center">*</th>
+            <th class="border border-gray-200 py-2 text-center">Acciónes</th>
             <th class="border border-gray-200 py-2 text-center">Nombre</th>
             <th class="border border-gray-200 py-2 text-center">Apellido</th>
             <th class="border border-gray-200 py-2 text-center">2° Apellido</th>
             <th class="border border-gray-200 py-2 text-center">
               Otros Nombres
             </th>
+            <th class="border border-gray-200 py-2 text-center">Pais</th>
             <th class="border border-gray-200 py-2 text-center">
               Tipo de Documento
             </th>
+            <th class="border border-gray-200 py-2 text-center">Area</th>
             <th class="border border-gray-200 py-2 text-center">
               Identificación
             </th>
@@ -320,11 +343,10 @@
           </tr>
         </thead>
         <tbody>
-          @if(!load){ @for(item of renderList.slice( minPage, maxPage ) ; track
+          @if(!load){ @for(item of renderList ; track
           item){
           <tr>
             <td class="border border-gray-200 py-2 text-center">
-              <div class="flex">
                 <button
                   class="mx-3"
                   title="Eliminar Empleado"
@@ -349,7 +371,6 @@
                     height="24"
                   />
                 </button>
-              </div>
             </td>
             <td class="border border-gray-200 py-2 text-center">
               {{ item.firstName }}
@@ -364,7 +385,13 @@
               {{ item.otherName }}
             </td>
             <td class="border border-gray-200 py-2 text-center">
+              {{ item.country }}
+            </td>
+            <td class="border border-gray-200 py-2 text-center">
               {{ item.document }}
+            </td>
+            <td class="border border-gray-200 py-2 text-center">
+              {{ item.area }}
             </td>
             <td class="border border-gray-200 py-2 text-center">
               {{ item.identification }}
@@ -379,16 +406,16 @@
               {{ item.startDate }}
             </td>
             <td class="border border-gray-200 py-2 text-center">
-              {{ item.updated_at }}
+              {{ item.created_at }}
             </td>
             <td class="border border-gray-200 py-2 text-center">
-              {{ item.created_at }}
+              {{ item.updated_at  }}
             </td>
           </tr>
 
           } } @else{
           <tr>
-            <th colspan="11" class="border border-gray-200 py-2 text-center">
+            <th colspan="14" class="border border-gray-200 py-2 text-center">
               <img
                 src="https://www.wpfaster.org/wp-content/uploads/2013/06/circle-loading-gif.gif"
                 alt="Descripción del GIF"

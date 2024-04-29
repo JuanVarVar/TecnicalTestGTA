@@ -28,6 +28,8 @@ class employeeSeeder extends Seeder
             $data['startDate']= date('Y-m-d');
             $data['firstLastName'] = $apellidos[array_rand($apellidos)];
             $data['secondLastName'] = $apellidos[array_rand($apellidos)];
+            $data['otherName'] = "";
+            $data['identification'] = $modelo->generateUniqueCode();
             $data['firstName'] = $nombres[array_rand($nombres)];
             $data['country']= $countries[array_rand($countries)];
             $data['document']=$documents[array_rand($documents)];

@@ -34,6 +34,7 @@ export interface formError {
     firstName: string[];
     firstLastName: string[];
     secondLastName: string[];
+    identification: string[];
     otherName: string[];
     country: string[];
     document: string[];

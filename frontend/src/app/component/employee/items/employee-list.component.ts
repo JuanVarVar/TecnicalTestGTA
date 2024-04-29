@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Data, User, ValidationError, formError } from '../interface/data';
 import { EmployeeService } from '../services/employee.service';
 import {
+  FormsModule,
   FormBuilder,
   FormGroup,
   Validators,
@@ -13,7 +14,7 @@ import {
 @Component({
   selector: 'app-employee-list',
   standalone: true,
-  imports: [AsyncPipe, NgIf, ReactiveFormsModule],
+  imports: [AsyncPipe, NgIf, ReactiveFormsModule,FormsModule],
   templateUrl: './employee-list.component.html',
   styleUrl: './employee-list.component.css',
 })
@@ -38,24 +39,19 @@ export class EmployeeListComponent implements OnInit {
       country: ['Colombia', Validators.required],
       document: ['Cédula de Ciudadanía', Validators.required],
       startDate: [date, Validators.required],
+      identification: [null,[]],
       area: ['Administración', Validators.required],
     });
   }
 
   isLoading: boolean = false;
 
-  public maxRender = 10;
-  public maxPreRender = 50;
   public employeesList$!: Observable<Data>;
   public renderList: User[] = [];
   public searchText = '';
   public offset = 1;
   public Oldoffset = 1;
-  public OldoffsetValue = 1;
-  public offsetValue = 1;
   public lockView = 0;
-  public maxPage = this.maxRender;
-  public minPage = 0;
   public load = false;
   public startDateDefault = new Date();
   public errors: formError = {
@@ -68,6 +64,7 @@ export class EmployeeListComponent implements OnInit {
     document: [],
     startDate: [],
     area: [],
+    identification: []
   };
 
   public errorSystem = '';
@@ -80,10 +77,10 @@ export class EmployeeListComponent implements OnInit {
   public idSelector = '';
 
   public search(): void {
-    var lockView = 0;
+    var page = this.offset.toString();
     if (this.searchText == '') {
       this.load = true;
-      this.service.getEmployees().subscribe(
+      this.service.getEmployees(page).subscribe(
         (response: any) => {
           this.load = false;
           this.employeesList$ = response;
@@ -95,8 +92,9 @@ export class EmployeeListComponent implements OnInit {
         }
       );
     } else {
+      this.offset = 1;
       this.load = true;
-      this.service.getEmployeesCriteria(this.searchText).subscribe(
+      this.service.getEmployeesCriteria(page,this.searchText).subscribe(
         (response: any) => {
           this.load = false;
           this.employeesList$ = response;
@@ -110,101 +108,20 @@ export class EmployeeListComponent implements OnInit {
     }
   }
 
-  public updatePage() {
-    var items = Object.keys(this.renderList).length;
-    var min = this.offsetValue * this.maxRender - this.maxRender;
-    var max = this.offsetValue * this.maxRender;
-
-    if ((max > items && items < this.maxPreRender) || items < this.maxRender) {
-      max = items;
-      min = this.offsetValue * this.maxRender;
-      while (min > max) {
-        min -= this.maxRender;
-      }
-    }
-
-    this.maxPage = max;
-    this.minPage = min;
-  }
-
-  public offsetRealValue(): void {
-    if (Object.keys(this.renderList).length == this.maxPreRender) {
-      if (this.offset > 1) {
-        var paginaActual = this.offset;
-        var maxDataRender = Math.ceil(this.maxPreRender / this.maxRender);
-        var cycles = 0;
-
-        while (paginaActual > maxDataRender) {
-          paginaActual -= maxDataRender;
-          cycles++;
-        }
-
-        this.offsetValue = paginaActual;
-
-        var diference = maxDataRender - this.OldoffsetValue;
-
-        if (
-          this.offset != 1 &&
-          (this.Oldoffset < this.offset - diference ||
-            this.Oldoffset > this.offset + diference)
-        ) {
-          this.search();
-        }
-
-        this.OldoffsetValue = this.offsetValue;
-        this.Oldoffset = this.offset;
-        this.updatePage();
-      } else {
-        this.offset = 1;
-      }
-    } else {
-      var items = Object.keys(this.renderList).length;
-
-      var paginaActual = this.offset;
-      var maxDataRender = Math.ceil(this.maxPreRender / this.maxRender);
-      var cycles = 0;
-
-      while (paginaActual > maxDataRender) {
-        paginaActual -= maxDataRender;
-        cycles++;
-      }
-
-      if (paginaActual * this.maxRender < items) {
-        this.OldoffsetValue = this.offsetValue;
-        this.Oldoffset = this.offset;
-        this.offsetValue = paginaActual;
-        this.updatePage();
-      } else {
-        var newOffsetValue = paginaActual;
-        var newOffset = this.offset;
-
-        while ((newOffsetValue - 1) * this.maxRender > items) {
-          newOffsetValue -= 1;
-          newOffset -= 1;
-        }
-
-        this.lockView = newOffset;
-
-        this.OldoffsetValue = newOffsetValue;
-        this.Oldoffset = newOffset;
-        this.offset = newOffset;
-        this.offsetValue = newOffsetValue;
-        this.updatePage();
-      }
-    }
-  }
 
   public onChangeSearch(event: Event) {
     const newValue = (event.target as HTMLInputElement).value;
     this.offset = 1;
     this.searchText = newValue;
+    this.restForm();
   }
 
   public onChangeOffset(event: Event) {
     const newValue = (event.target as HTMLInputElement).value;
+    console.log(newValue);
     this.offset = !isNaN(Number(newValue)) ? parseInt(newValue) : 1;
     if (this.lockView == 0 || this.offset <= this.lockView) {
-      this.offsetRealValue();
+      this.search();  
     }
   }
 
@@ -286,6 +203,7 @@ export class EmployeeListComponent implements OnInit {
       country: [e.country, Validators.required],
       document: [e.document, Validators.required],
       startDate: [null, []],
+      identification: [e.identification, []],
       area: [e.area, Validators.required],
     });
   }
@@ -294,7 +212,6 @@ export class EmployeeListComponent implements OnInit {
     this.restForm();
     this.deleteEmployee = true;
     this.idSelector = e;
-    console.log(e);
   }
 
   public deleteEmployeeData(e: boolean) {
@@ -336,6 +253,8 @@ export class EmployeeListComponent implements OnInit {
     const day = ('0' + currentDate.getDate()).slice(-2);
     const date = `${year}-${month}-${day}`;
 
+    this.errorSystem = '';
+
     this.errors = {
       id: [],
       firstName: [],
@@ -346,6 +265,7 @@ export class EmployeeListComponent implements OnInit {
       document: [],
       startDate: [],
       area: [],
+      identification: []
     };
 
     this.formulario = this.formBuilder.group({
@@ -356,6 +276,7 @@ export class EmployeeListComponent implements OnInit {
       country: ['Colombia', Validators.required],
       document: ['Cédula de Ciudadanía', Validators.required],
       startDate: [date, Validators.required],
+      identification: [null, []],
       area: ['Administración', Validators.required],
     });
   }
@@ -375,6 +296,7 @@ export class EmployeeListComponent implements OnInit {
       document: [],
       startDate: [],
       area: [],
+      identification:[]
     };
     this.errorSystem = e.message;
   }

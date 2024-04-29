@@ -12,16 +12,16 @@ export class EmployeeService {
 
   constructor(private http:HttpClient) { }
 
-  public getEmployees(): Observable<any>{
-      return this.http.get(this.API);
+  public getEmployees(e:string): Observable<any>{
+      return this.http.get(this.API+e+"/none");
   }
 
   public getEmployee(e:string): Observable<any>{
     return this.http.get(this.API+e);
   }
 
-  public getEmployeesCriteria(e: string): Observable<any>{
-    return this.http.post(this.API+"criteria",{"criteria":e},{ headers: { 'Content-Type': 'application/json' }});
+  public getEmployeesCriteria(e: string,z: string): Observable<any>{
+    return this.http.post(this.API+"criteria",{"criteria":z,"offset":e},{ headers: { 'Content-Type': 'application/json' }});
   }
 
   public addEmployees(e: any): Observable<any>{
@@ -33,7 +33,6 @@ export class EmployeeService {
   }
   
   public deleteEmployee(e:string): Observable<any>{
-    console.log(this.API+e);
     return this.http.delete(this.API+e);
   }
 

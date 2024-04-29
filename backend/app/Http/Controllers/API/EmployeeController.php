@@ -12,7 +12,7 @@ Use Log;
 
 class EmployeeController extends Controller
 {
-      private $preloadData = 50;
+      private $preloadData = 10;
 
       private $messages = [
         'exists' => 'Ese empleado no existe',
@@ -23,6 +23,7 @@ class EmployeeController extends Controller
         'date' => 'El campo debe ser una fecha',
         'before_or_equal' => 'La fecha supera a la actual',
         'after' => 'La fecha es demasiado antigua',
+        'unique' => 'Ya existe el campo enviado',
       ];
 
       public function getEmployeesData($offset = "", $orders = ""){
@@ -31,7 +32,7 @@ class EmployeeController extends Controller
           //Verificación de datos
           $ordersField = [];
           $offsetValue = str_replace(" ", "", $offset) != "" && 
-          is_numeric($offset) && intval($offset) >= 0 ? intval($offset) : 0;
+          is_numeric($offset) && intval($offset) >= 0 ? intval($offset) : 1;
 
           if($orders != "") 
             $ordersField = explode(";", $orders);
@@ -48,7 +49,7 @@ class EmployeeController extends Controller
               $data = $data->orderBy($field);
           }
 
-          $output= $data->offset($offsetValue * $this->preloadData)->take($this->preloadData)->get();
+          $output= $data->offset(($offsetValue-1) * $this->preloadData)->take($this->preloadData)->get();
 
           return $this->responseData($output->all(),'Busqueda completa','ninguno',true,200);
         }catch(\Exception $e){
@@ -63,7 +64,7 @@ class EmployeeController extends Controller
         
         try {
           $requestValidate = [
-          'criteria' => 'required|max:50|regex:/^[a-zA-Z0-9\/áéíóúÁÉÍÓÚ\s]+$/',
+          'criteria' => 'required|max:50|regex:/^[a-zA-Z0-9\/áéíóúÁÉÍÓÚ\s\-]+$/',
           'offset' => 'required|numeric'
           ];
 
@@ -85,7 +86,7 @@ class EmployeeController extends Controller
           $criteria = str_replace(" ", "", $request['criteria'])  != "" ?  $request['criteria']: "";
 
           $offsetValue = str_replace(" ", "", $request['offset']) != "" && 
-          is_numeric($request['offset']) ? intval($request['offset']) : 0;
+          is_numeric($request['offset']) ? intval($request['offset']) : 1;
 
           if($request['orders'] != "") 
             $ordersField = explode(";", $request['orders']);
@@ -106,7 +107,7 @@ class EmployeeController extends Controller
               $data = $data->orderBy($field);
           }
 
-          $output= $data->offset($offsetValue * $this->preloadData)->take($this->preloadData)->get();
+          $output= $data->offset(($offsetValue-1) * $this->preloadData)->take($this->preloadData)->get();
 
           return $this->responseData($output->all(),'Busqueda completa','ninguno',true,200);
         }catch(\Exception $e){
@@ -148,6 +149,7 @@ class EmployeeController extends Controller
             'firstLastName' => 'required|max:20|regex:/^[a-zA-Z\s]+$/',
             'secondLastName' => 'required|max:20|regex:/^[a-zA-Z\s]+$/',
             'otherName' => 'nullable|max:50|regex:/^[a-zA-Z\s]+$/',
+            'identification' => 'required|unique:employee,identification|string|max:20|regex:/^[a-zA-Z0-9\-]{1,20}$/',
             'country' => ['required', Rule::in($modelo->getCountries())],
             'document' => ['required', Rule::in($modelo->getDocuments())],
             'startDate' => [
@@ -240,6 +242,20 @@ class EmployeeController extends Controller
             'firstLastName' => 'required|max:20|regex:/^[a-zA-Z\s]+$/',
             'secondLastName' => 'required|max:20|regex:/^[a-zA-Z\s]+$/',
             'otherName' => 'nullable|max:50|regex:/^[a-zA-Z\s]+$/',
+            'identification' =>  [
+              'required',
+              'string',
+              'max:50',
+              'regex:/^[a-zA-Z0-9\-]{1,20}$/',
+              function ($attribute, $value, $fail) use ($request, $id) {
+                  if ($request->isMethod('put')) {
+                      // Validación para la actualización
+                      if (Employee::where('identification', $value)->where('id', '!=', $id)->exists()) {
+                          $fail('Ya existe el campo enviado');
+                      }
+                  }
+              },
+          ],
             'country' => ['required', Rule::in($modelo->getCountries())],
             'document' => ['required', Rule::in($modelo->getDocuments())],
             'area' => ['required', Rule::in($modelo->getAreas())]
