@@ -1,0 +1,51 @@
+Paso 1:
+Descargue la Versión más Reciente de Node.js en su web oficial e instalelo.
+
+Paso 2:
+Para el caso del uso local, debera descargar Xampp o algun otro programa que le permita emular un entorno PHP con un servidor(recomendamos el primero mencionado en su versión más reciente).
+
+Paso 3:
+Descargue la Versión más reciente de Composer en su web oficial e instalelo.
+
+Paso 4:
+Debera instalar mediante la terminal de comandos: 
+
+Angular/CLI 17.3.0 = npm
+
+Laravel v11.5.0 = composer
+
+Paso 5:
+Dirijase al link de GitHub e ingrese, puede descargar el proyecto en zip, o clonarlo. (El metodo que prefieran)
+
+Paso 6: 
+Debera actualizar las dependencias de cada repositorio (debe tomar en cuenta usar el comando cd en la terminal de comando para entrar en cada carpeta, ya que el proceso no funcionara si permanecen en la carpeta que las contiene a las dos soluciones)
+
+npm install para Angular (frontend)
+
+composer install para Laravel (backend)
+
+En este ultimo caso, tambien pueden provar con npm, pero recomendaria hacerlo con composer.
+
+Paso 7:
+Para configurar el servidor de Laravel solo sera necesario ir al archivo .env en la carpeta backend.
+
+Modifiquen los datos (en concreto los de DB_CONECTION) para que se acomple a los datos de la Base de Datos. Ademas, crear una base de datos llamada laravel. Como
+el archivo ubicado en backend/config/database.php (Deben cambiar en la primera linea la conección por default "DB_CONNECTION")
+
+Una vez hecho todo. Con el servidor php ENCENDIDO, deben correr el comando: 
+
+php artisan migrate --seed 
+
+Para que se creen todas las tablas necesarias para el funcionamiento del backen. Al finalizar el proceso, solo sera cuestion de aplicar el comando:
+
+php artisan serve 
+
+Esto activara el servidor de laravel API que se ubica en el puerto http://localhost:8000/ por defecto. 
+
+Paso 8: 
+
+El proceso con el frontend es similar, puesto que bastara con aplicar 
+
+ng serve
+
+para iniciar el servidor el cual deberia estar configurado en http://localhost:4200. 
